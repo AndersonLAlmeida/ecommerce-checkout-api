@@ -1,4 +1,5 @@
 plugins {
+	id 'com.commercehub.gradle.plugin.avro' version '0.17.0'
 	id 'org.springframework.boot' version '2.4.1'
 	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
 	id 'java'
@@ -8,13 +9,19 @@ group = 'br.almeida.ecommerce'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '15'
 
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
 repositories {
 	mavenCentral()
-	maven { url 'https://repo.spring.io/milestone' }
+	maven { url 'http://packages.confluent.io/maven/' }
 }
 
 ext {
-	set('springCloudVersion', "2020.0.0")
+	set('springCloudVersion', "Hoxton.SR6")
 }
 
 dependencies {
@@ -23,7 +30,14 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
 	implementation 'org.springframework.cloud:spring-cloud-stream'
 	implementation 'org.springframework.cloud:spring-cloud-stream-binder-kafka-streams'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'io.confluent:kafka-avro-serializer:5.5.8'
+	runtimeOnly 'org.postgresql:postgresql'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation ('org.springframework.boot:spring-boot-starter-test'){
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	testImplementation 'org.springframework.cloud:spring-cloud-stream-test-support'
 }
 
 dependencyManagement {
